@@ -245,6 +245,56 @@ body.webgl-on .eyebrow{text-shadow:0 0 12px rgba(8,13,10,.97),0 0 26px rgba(8,13
   #grain{display:none;}
   #aurora{filter:blur(58px);}
 }
+
+/* ===== FAQ — Por que ser revendedora? ===== */
+.faq-open{margin-top:6px;}
+.faq-overlay{
+  position:fixed; inset:0; z-index:120; display:flex; align-items:center; justify-content:center;
+  padding:clamp(14px,3vw,40px); background:rgba(10,18,14,.62); backdrop-filter:blur(8px);
+  opacity:0; visibility:hidden; transition:opacity .4s var(--exp), visibility .4s;
+}
+.faq-overlay.is-open{opacity:1; visibility:visible;}
+.faq-panel{
+  position:relative; width:min(680px,100%); max-height:90vh; overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:clamp(26px,4vw,46px) clamp(20px,3.4vw,40px);
+  border-radius:20px; border:1px solid rgba(205,168,111,.22);
+  background:linear-gradient(180deg, #1d2c24 0%, #16221b 100%);
+  box-shadow:0 30px 80px rgba(0,0,0,.5);
+  transform:translateY(18px) scale(.98); transition:transform .45s var(--exp);
+}
+.faq-overlay.is-open .faq-panel{transform:translateY(0) scale(1);}
+.faq-close{
+  position:absolute; top:14px; right:16px; width:40px; height:40px; border-radius:50%;
+  border:1px solid rgba(244,239,230,.18); background:rgba(244,239,230,.04); color:var(--cream-dim);
+  font-size:1.5rem; line-height:1; cursor:pointer; transition:all .25s var(--soft);
+}
+.faq-close:hover{color:var(--cream); border-color:var(--gold); background:rgba(205,168,111,.1);}
+.faq-title{font-family:'Cormorant Garamond',serif; font-weight:400; font-size:clamp(1.7rem,4vw,2.4rem);
+  color:var(--cream); line-height:1.05; margin:4px 0 6px;}
+.faq-sub{font-family:'Jost'; font-weight:300; font-size:.78rem; letter-spacing:.04em; color:var(--cream-faint); margin-bottom:18px;}
+.faq-list{display:flex; flex-direction:column; gap:8px;}
+.faq-item{border:1px solid rgba(205,168,111,.16); border-radius:13px; overflow:hidden; background:rgba(244,239,230,.02);}
+.faq-q{
+  width:100%; display:flex; align-items:center; justify-content:space-between; gap:14px; text-align:left;
+  padding:15px 18px; background:none; border:none; cursor:pointer;
+  font-family:'Jost'; font-weight:400; font-size:.92rem; line-height:1.35; color:var(--cream);
+  transition:color .25s, background .25s;
+}
+.faq-q:hover{color:var(--gold-light); background:rgba(205,168,111,.05);}
+.faq-ico{flex-shrink:0; width:24px; height:24px; display:grid; place-items:center;
+  color:var(--gold); font-size:1.2rem; font-weight:300; transition:transform .35s var(--exp);}
+.faq-item.is-open .faq-ico{transform:rotate(45deg);}
+.faq-item.is-open > .faq-q{color:var(--gold-light);}
+.faq-a{max-height:0; overflow:hidden; transition:max-height .45s var(--exp);}
+.faq-item.is-open .faq-a{max-height:640px;}
+.faq-a p{font-family:'Jost'; font-weight:300; font-size:.86rem; line-height:1.65; color:var(--cream-dim);
+  padding:0 18px 6px;}
+.faq-a p:first-child{padding-top:2px;}
+.faq-a p:last-child{padding-bottom:16px;}
+.faq-a b{color:var(--cream); font-weight:500;}
+.faq-a i{color:var(--gold-light); font-style:italic;}
+.faq-cta{margin-top:22px; display:flex; justify-content:center;}
 </style>
 </head>
 <body>
@@ -286,7 +336,10 @@ body.webgl-on .eyebrow{text-shadow:0 0 12px rgba(8,13,10,.97),0 0 26px rgba(8,13
         <span class="line gold">conhecer.</span>
       </h1>
       <p class="lead" data-reveal>Faça parte da experiência CP Alcina Maria. Um cadastro breve e cuidadoso — menos de um minuto.</p>
-      <div class="nav" data-reveal><button class="btn" data-action="next" data-magnetic data-cursor><span class="btn-t">Iniciar</span><span class="arrow">→</span></button></div>
+      <div class="nav" data-reveal>
+        <button class="btn" data-action="next" data-magnetic data-cursor><span class="btn-t">Iniciar</span><span class="arrow">→</span></button>
+        <button class="btn-ghost faq-open" data-action="faq-open" data-cursor>💬 Por que ser revendedora?</button>
+      </div>
     </div>
   </section>
 
@@ -394,6 +447,91 @@ body.webgl-on .eyebrow{text-shadow:0 0 12px rgba(8,13,10,.97),0 0 26px rgba(8,13
   </section>
 
 </main>
+
+<!-- ===== FAQ — Por que ser revendedora? ===== -->
+<div class="faq-overlay" id="faq-overlay" aria-hidden="true">
+  <div class="faq-panel" role="dialog" aria-modal="true" aria-label="Por que ser revendedora">
+    <button class="faq-close" data-action="faq-close" aria-label="Fechar">×</button>
+    <span class="eyebrow">Programa de revenda</span>
+    <h2 class="faq-title">Por que ser revendedora?</h2>
+    <p class="faq-sub">Toque em cada pergunta para ver a resposta.</p>
+
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq-q>Quais marcas eu posso revender?<span class="faq-ico">+</span></button>
+        <div class="faq-a"><p>Com um <b>cadastro unificado</b> você revende <b>O Boticário, Quem disse, Berenice?, O.U.i e Eudora</b>. São marcas já conhecidas e desejadas — as pessoas já gostam e procuram, o que facilita muito a venda e atende diferentes públicos e ocasiões.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq-q>Recebo amostras grátis?<span class="faq-ico">+</span></button>
+        <div class="faq-a"><p>Sim! Você recebe amostras que ajudam a apresentar as novidades aos seus clientes. É especialmente útil para <b>vender perfumes</b>, porque o cliente pode sentir a fragrância antes de comprar.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq-q>Como é a entrega e os horários de trabalho?<span class="faq-ico">+</span></button>
+        <div class="faq-a"><p>Os pedidos costumam chegar em <b>poucos dias úteis</b>, e você tem total flexibilidade: <b>organiza seus próprios horários</b> de trabalho.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq-q>Quanto dá para lucrar? (com exemplo real)<span class="faq-ico">+</span></button>
+        <div class="faq-a"><p>Dependendo das promoções e descontos exclusivos, os lucros podem chegar a <b>mais de 30%</b>.</p><p><b>Exemplo prático:</b> você compra um perfume O Boticário com desconto por <b>R$ 220,00</b>. Acrescentando 30%, cobra <b>R$ 286,00</b> do cliente. Quando ele acerta o pedido, você ganha <b>R$ 66,00</b> de comissão.<br>Ou seja: <i>preço que você paga + sua margem = preço de venda ao cliente</i>.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq-q>Como os brindes podem dobrar meu lucro?<span class="faq-ico">+</span></button>
+        <div class="faq-a"><p>De tempos em tempos o Boticário lança promoções em que os revendedores ganham <b>brindes</b> para acrescentar ao estoque e vender. Como você ganhou o produto de graça, <b>tudo que vender dele é lucro puro (100%)</b>. Quanto mais você vende, mais brindes ganha — e mais margem você tem.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq-q>Quais são as categorias (níveis) do programa?<span class="faq-ico">+</span></button>
+        <div class="faq-a"><p>As categorias são uma <b>escada de crescimento</b>: quanto mais você vende no ciclo, mais alto sobe e mais benefícios desbloqueia. São <b>8 níveis</b>, definidos pelo valor acumulado em pedidos.</p>
+        <p><b>Regulares:</b><br>• Cobre — começando, pedidos até R$ 999<br>• Bronze — a partir de R$ 1.000<br>• Prata — a partir de R$ 3.000<br>• Ouro — a partir de R$ 9.000<br>• Platina — a partir de R$ 20.000</p>
+        <p><b>VIP (topo):</b><br>• Rubi — a partir de R$ 50.000<br>• Esmeralda — a partir de R$ 80.000<br>• Diamante — a partir de R$ 130.000 (nível máximo)</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq-q>A lucratividade muda conforme a marca e o nível?<span class="faq-ico">+</span></button>
+        <div class="faq-a"><p>• <b>O Boticário</b> e <b>Quem disse, Berenice?</b>: 15% em todas as categorias (não muda).<br>• <b>Eudora</b> e <b>AuMigos</b>: a margem cresce — começa em 20% (Cobre/Bronze), sobe para 25% (Prata), 28% (Ouro), 30% (Platina) e chega a <b>35% no Diamante</b>.<br>• <b>O.U.i</b>: lucratividade variável por produto em todos os níveis.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq-q>Como funciona o acúmulo de pontos?<span class="faq-ico">+</span></button>
+        <div class="faq-a"><p>Os pontos por real gasto aumentam conforme você sobe: do <b>1 ponto</b> no Bronze até <b>7 pontos</b> no Diamante. As categorias mais altas (Esmeralda e Diamante) ainda ganham pontos extras e um teto maior de acúmulo, acelerando ainda mais a evolução.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq-q>Posso parcelar no boleto?<span class="faq-ico">+</span></button>
+        <div class="faq-a"><p>Sim, e o fôlego no caixa aumenta conforme você cresce:<br>• <b>Cobre a Prata:</b> 2x ou 3x em pedidos acima de R$ 500<br>• <b>Ouro e Platina:</b> 3x ou 4x acima de R$ 800<br>• <b>VIPs (Rubi, Esmeralda, Diamante):</b> 5x, independente do valor</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq-q>Quantos pacotes de amostras eu recebo?<span class="faq-ico">+</span></button>
+        <div class="faq-a"><p>Crescem bastante por categoria: <b>1</b> no Bronze, <b>3</b> na Prata, <b>5</b> no Ouro, <b>7</b> na Platina, <b>10</b> no Rubi, <b>20</b> na Esmeralda e até <b>40 pacotes</b> no Diamante.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq-q>O que são os demonstradores de lançamento (VIP)?<span class="faq-ico">+</span></button>
+        <div class="faq-a"><p>A partir do <b>Rubi</b>, você ganha o benefício <b>“compra 5, ganha 1”</b> para experimentar os lançamentos. Vale para mais categorias de produto conforme sobe: 2 no Rubi, 3 na Esmeralda e 4 no Diamante.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq-q>Quais benefícios todas as categorias têm?<span class="faq-ico">+</span></button>
+        <div class="faq-a"><p>Do Cobre ao Diamante, todos participam de <b>sorteios</b>, do <b>concurso para visita à fábrica</b> e de <b>promoções exclusivas</b>.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" data-faq-q>E os benefícios exclusivos do topo (Diamante)?<span class="faq-ico">+</span></button>
+        <div class="faq-a"><p>Só no <b>Diamante</b>: Programa de Aceleração de Negócios, troféu de reconhecimento e kit pré-lançamento, evento de reconhecimento (<i>Transformadores da Beleza</i>) e <b>viagens internacionais</b> (<i>Juntos Pelo Mundo</i>).</p></div>
+      </div>
+
+    </div>
+
+    <div class="faq-cta">
+      <button class="btn" data-action="faq-start" data-cursor><span class="btn-t">Quero me cadastrar</span><span class="arrow">→</span></button>
+    </div>
+  </div>
+</div>
 
 <!-- Preloader -->
 <div id="pre">
@@ -849,6 +987,19 @@ body.webgl-on .eyebrow{text-shadow:0 0 12px rgba(8,13,10,.97),0 0 26px rgba(8,13
   wire(inCep, formatCEP, 'cep');
   [inRua,inBairro,inCidade].forEach(i => wire(i, null, 'end'));
 
+  /* ---------- FAQ (Por que ser revendedora) ---------- */
+  const faqOverlay = $('#faq-overlay');
+  function openFaq(){ faqOverlay.classList.add('is-open'); faqOverlay.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+  function closeFaq(){ faqOverlay.classList.remove('is-open'); faqOverlay.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+  /* clicar fora do painel fecha */
+  faqOverlay.addEventListener('click', e => { if(e.target === faqOverlay) closeFaq(); });
+  /* abrir/fechar perguntas (accordion) */
+  faqOverlay.addEventListener('click', e => {
+    const q = e.target.closest('[data-faq-q]'); if(!q) return;
+    q.closest('.faq-item').classList.toggle('is-open');
+  });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape' && faqOverlay.classList.contains('is-open')) closeFaq(); });
+
   /* ---------- Actions ---------- */
   document.addEventListener('click', e => {
     const t = e.target.closest('[data-action]'); if(!t) return;
@@ -857,6 +1008,9 @@ body.webgl-on .eyebrow{text-shadow:0 0 12px rgba(8,13,10,.97),0 0 26px rgba(8,13
     else if(a === 'prev') goPrev();
     else if(a === 'skip-cep') skipCep();
     else if(a === 'restart') restart();
+    else if(a === 'faq-open') openFaq();
+    else if(a === 'faq-close') closeFaq();
+    else if(a === 'faq-start'){ closeFaq(); goNext(); }
   });
 
   /* ============================================================
