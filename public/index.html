@@ -295,6 +295,40 @@ body.webgl-on .eyebrow{text-shadow:0 0 12px rgba(8,13,10,.97),0 0 26px rgba(8,13
 .faq-a b{color:var(--cream); font-weight:500;}
 .faq-a i{color:var(--gold-light); font-style:italic;}
 .faq-cta{margin-top:22px; display:flex; justify-content:center;}
+
+/* ===== Chat de revenda (simulado, sem IA) ===== */
+.chat-panel{display:flex; flex-direction:column; padding:0; max-height:90vh;}
+.chat-head{display:flex; align-items:center; gap:12px; padding:15px 16px; border-bottom:1px solid rgba(205,168,111,.16);}
+.chat-avatar{width:42px; height:42px; border-radius:50%; display:grid; place-items:center; font-size:1.2rem;
+  background:linear-gradient(135deg,var(--gold-light),var(--gold-deep)); flex-shrink:0;}
+.chat-who{display:flex; flex-direction:column; line-height:1.3; flex:1;}
+.chat-who b{font-family:'Jost'; font-weight:500; font-size:.9rem; color:var(--cream);}
+.chat-who span{font-family:'Jost'; font-weight:300; font-size:.68rem; color:var(--cream-faint); display:flex; align-items:center; gap:6px;}
+.chat-dot{width:7px; height:7px; border-radius:50%; background:var(--ok); display:inline-block;}
+.chat-head .faq-close{position:static;}
+.chat-body{flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:18px; display:flex; flex-direction:column; gap:9px; min-height:230px;}
+.msg{max-width:85%; padding:11px 14px; border-radius:16px; font-family:'Jost'; font-weight:300; font-size:.85rem; line-height:1.55;
+  animation:msgIn .35s var(--exp) both;}
+@keyframes msgIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+.msg.bot{align-self:flex-start; background:rgba(244,239,230,.06); color:var(--cream-dim); border-bottom-left-radius:5px;}
+.msg.user{align-self:flex-end; background:linear-gradient(120deg,var(--gold-deep),var(--gold)); color:#16221b; font-weight:400; border-bottom-right-radius:5px;}
+.msg b{color:var(--cream); font-weight:600;}
+.msg.user b{color:#11201a;}
+.msg i{color:var(--gold-light); font-style:italic;}
+.typing{align-self:flex-start; display:flex; gap:4px; padding:13px 15px; background:rgba(244,239,230,.06);
+  border-radius:16px; border-bottom-left-radius:5px;}
+.typing span{width:7px; height:7px; border-radius:50%; background:var(--cream-faint); animation:blink 1.2s infinite;}
+.typing span:nth-child(2){animation-delay:.18s;} .typing span:nth-child(3){animation-delay:.36s;}
+@keyframes blink{0%,60%,100%{opacity:.25;} 30%{opacity:1;}}
+.chat-chips{display:flex; flex-wrap:wrap; gap:7px; padding:11px 14px; border-top:1px solid rgba(205,168,111,.14);
+  max-height:32vh; overflow-y:auto;}
+.chip{font-family:'Jost'; font-weight:300; font-size:.75rem; color:var(--cream-dim); cursor:pointer;
+  padding:8px 13px; border-radius:20px; border:1px solid rgba(205,168,111,.28); background:rgba(205,168,111,.05);
+  transition:all .22s var(--soft);}
+.chip:hover{color:#16221b; background:var(--gold-light); border-color:var(--gold-light);}
+.chip.used{opacity:.4;}
+.chat-foot{padding:12px 16px 16px; display:flex; justify-content:center; border-top:1px solid rgba(205,168,111,.14);}
+#faq-data{display:none !important;}  /* fonte de dados oculta do chat */
 </style>
 </head>
 <body>
@@ -450,13 +484,17 @@ body.webgl-on .eyebrow{text-shadow:0 0 12px rgba(8,13,10,.97),0 0 26px rgba(8,13
 
 <!-- ===== FAQ — Por que ser revendedora? ===== -->
 <div class="faq-overlay" id="faq-overlay" aria-hidden="true">
-  <div class="faq-panel" role="dialog" aria-modal="true" aria-label="Por que ser revendedora">
-    <button class="faq-close" data-action="faq-close" aria-label="Fechar">×</button>
-    <span class="eyebrow">Programa de revenda</span>
-    <h2 class="faq-title">Por que ser revendedora?</h2>
-    <p class="faq-sub">Toque em cada pergunta para ver a resposta.</p>
+  <div class="faq-panel chat-panel" role="dialog" aria-modal="true" aria-label="Atendimento sobre revenda">
+    <div class="chat-head">
+      <div class="chat-avatar">💄</div>
+      <div class="chat-who"><b>Atendente · CP Alcina Maria</b><span><i class="chat-dot"></i>online · dúvidas sobre revenda</span></div>
+      <button class="faq-close" data-action="faq-close" aria-label="Fechar">×</button>
+    </div>
+    <div class="chat-body" id="chat-body"></div>
+    <div class="chat-chips" id="chat-chips"></div>
 
-    <div class="faq-list">
+    <!-- Perguntas/respostas (fonte de dados do chat — oculto) -->
+    <div class="faq-list" id="faq-data" hidden>
 
       <div class="faq-item">
         <button class="faq-q" data-faq-q>Quais marcas eu posso revender?<span class="faq-ico">+</span></button>
@@ -527,7 +565,7 @@ body.webgl-on .eyebrow{text-shadow:0 0 12px rgba(8,13,10,.97),0 0 26px rgba(8,13
 
     </div>
 
-    <div class="faq-cta">
+    <div class="chat-foot">
       <button class="btn" data-action="faq-start" data-cursor><span class="btn-t">Quero me cadastrar</span><span class="arrow">→</span></button>
     </div>
   </div>
@@ -987,17 +1025,52 @@ body.webgl-on .eyebrow{text-shadow:0 0 12px rgba(8,13,10,.97),0 0 26px rgba(8,13
   wire(inCep, formatCEP, 'cep');
   [inRua,inBairro,inCidade].forEach(i => wire(i, null, 'end'));
 
-  /* ---------- FAQ (Por que ser revendedora) ---------- */
+  /* ---------- Chat de revenda (simulado, respostas fixas) ---------- */
   const faqOverlay = $('#faq-overlay');
-  function openFaq(){ faqOverlay.classList.add('is-open'); faqOverlay.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+  const chatBody = $('#chat-body');
+  const chatChips = $('#chat-chips');
+  /* lê as perguntas/respostas da lista oculta #faq-data */
+  const QA = Array.from(document.querySelectorAll('#faq-data .faq-item')).map(it => ({
+    q: (it.querySelector('.faq-q').childNodes[0].textContent || '').trim(),
+    a: it.querySelector('.faq-a').innerHTML
+  }));
+  let chatStarted = false, chatBusy = false;
+
+  function chatScroll(){ chatBody.scrollTop = chatBody.scrollHeight; }
+  function addMsg(html, who){
+    const d = document.createElement('div');
+    d.className = 'msg ' + who; d.innerHTML = html;
+    chatBody.appendChild(d); chatScroll(); return d;
+  }
+  function renderChips(){
+    chatChips.innerHTML = '';
+    QA.forEach((item, i) => {
+      const c = document.createElement('button');
+      c.type = 'button'; c.className = 'chip'; c.textContent = item.q; c.dataset.qi = i;
+      chatChips.appendChild(c);
+    });
+  }
+  function startChat(){
+    if(chatStarted) return; chatStarted = true;
+    addMsg('Oi! 💛 Posso te explicar <b>por que vale a pena ser revendedora</b>. É só tocar numa pergunta aqui embaixo 👇', 'bot');
+    renderChips();
+  }
+  function askQ(i){
+    if(chatBusy) return;
+    const item = QA[i]; if(!item) return;
+    chatBusy = true;
+    const chip = chatChips.querySelector('.chip[data-qi="' + i + '"]'); if(chip) chip.classList.add('used');
+    addMsg(escapeHtml(item.q), 'user');
+    const t = document.createElement('div');
+    t.className = 'typing'; t.innerHTML = '<span></span><span></span><span></span>';
+    chatBody.appendChild(t); chatScroll();
+    setTimeout(() => { t.remove(); addMsg(item.a, 'bot'); chatBusy = false; }, 700);
+  }
+
+  function openFaq(){ faqOverlay.classList.add('is-open'); faqOverlay.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; startChat(); }
   function closeFaq(){ faqOverlay.classList.remove('is-open'); faqOverlay.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
-  /* clicar fora do painel fecha */
-  faqOverlay.addEventListener('click', e => { if(e.target === faqOverlay) closeFaq(); });
-  /* abrir/fechar perguntas (accordion) */
-  faqOverlay.addEventListener('click', e => {
-    const q = e.target.closest('[data-faq-q]'); if(!q) return;
-    q.closest('.faq-item').classList.toggle('is-open');
-  });
+  faqOverlay.addEventListener('click', e => { if(e.target === faqOverlay) closeFaq(); }); /* clicar fora fecha */
+  chatChips.addEventListener('click', e => { const c = e.target.closest('.chip'); if(c) askQ(+c.dataset.qi); });
   document.addEventListener('keydown', e => { if(e.key === 'Escape' && faqOverlay.classList.contains('is-open')) closeFaq(); });
 
   /* ---------- Actions ---------- */
