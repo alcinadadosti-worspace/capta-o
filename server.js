@@ -131,23 +131,24 @@ app.post('/api/submit', async (req, res) => {
     return res.status(400).json({ ok: false, error: 'nome obrigatório' });
   }
 
-  let dbInfo = null;
-  try {
-    dbInfo = await salvarCliente(cliente);
-  } catch (e) {
-    console.error('[ERRO Banco]', e.message);
-    // Não interrompe: ainda tentamos avisar no Slack para não perder o lead.
-  }
+  // Responde IMEDIATAMENTE para a tela de sucesso aparecer sem atraso.
+  // A gravação no banco e o aviso no Slack acontecem em segundo plano —
+  // o cliente não precisa esperar por eles.
+  res.json({ ok: true });
 
-  try {
-    await avisarSlack(cliente, dbInfo);
-  } catch (e) {
-    console.error('[ERRO Slack]', e.message);
-  }
-
-  // Sucesso para o cliente desde que pelo menos uma via tenha funcionado,
-  // ou se nenhum serviço estiver configurado (modo de teste local).
-  res.json({ ok: true, id: dbInfo ? dbInfo.id : null });
+  (async () => {
+    let dbInfo = null;
+    try {
+      dbInfo = await salvarCliente(cliente);
+    } catch (e) {
+      console.error('[ERRO Banco]', e.message);
+    }
+    try {
+      await avisarSlack(cliente, dbInfo);
+    } catch (e) {
+      console.error('[ERRO Slack]', e.message);
+    }
+  })();
 });
 
 initDb()
