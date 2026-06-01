@@ -776,7 +776,8 @@ body.webgl-on .eyebrow{text-shadow:0 0 12px rgba(8,13,10,.97),0 0 26px rgba(8,13
   function skipCep(){
     if(current !== idxOf('step-cep')) return;
     cepBusy = false;
-    formData.cep = inCep.value.trim(); // pode ficar vazio
+    // só guarda o CEP se estiver completo (8 dígitos); senão fica vazio
+    formData.cep = inCep.value.replace(/\D/g,'').length === 8 ? inCep.value.trim() : '';
     inCep.closest('.field').classList.remove('bad');
     setCepState('default');
     showScreen(idxOf('step-end'), 1);
