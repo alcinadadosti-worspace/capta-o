@@ -357,6 +357,7 @@ body.webgl-on .eyebrow{text-shadow:0 0 12px rgba(8,13,10,.97),0 0 26px rgba(8,13
       <div class="nav" data-reveal>
         <button class="btn" data-action="next" data-magnetic data-cursor><span class="btn-t">Continuar</span><span class="arrow">→</span></button>
         <span class="enter-hint">ou tecle <kbd>Enter</kbd></span>
+        <button class="btn-ghost" data-action="skip-cep" data-cursor>Não sei meu CEP</button>
         <button class="btn-ghost" data-action="prev" data-cursor><span class="ar">←</span> Voltar</button>
       </div>
     </div>
@@ -771,6 +772,16 @@ body.webgl-on .eyebrow{text-shadow:0 0 12px rgba(8,13,10,.97),0 0 26px rgba(8,13
   }
   function goPrev(){ if(current > 0) showScreen(current - 1, -1); }
 
+  /* Cliente não sabe o CEP: pula direto para o endereço manual. */
+  function skipCep(){
+    if(current !== idxOf('step-cep')) return;
+    cepBusy = false;
+    formData.cep = inCep.value.trim(); // pode ficar vazio
+    inCep.closest('.field').classList.remove('bad');
+    setCepState('default');
+    showScreen(idxOf('step-end'), 1);
+  }
+
   const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
   async function submitForm(){
@@ -843,6 +854,7 @@ body.webgl-on .eyebrow{text-shadow:0 0 12px rgba(8,13,10,.97),0 0 26px rgba(8,13
     const a = t.dataset.action;
     if(a === 'next') goNext();
     else if(a === 'prev') goPrev();
+    else if(a === 'skip-cep') skipCep();
     else if(a === 'restart') restart();
   });
 
