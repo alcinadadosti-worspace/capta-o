@@ -1,0 +1,16 @@
+# Configuração do Render (opcional, mas facilita).
+# Se você usar "Blueprint" no Render, ele lê este arquivo automaticamente.
+services:
+  - type: web
+    name: captacao-clientes
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false      # você preenche no painel do Render (secreto)
+      - key: SLACK_BOT_TOKEN
+        sync: false      # você preenche no painel do Render (secreto)
+      - key: SLACK_TARGET_ID
+        value: U0895CZ8HU7
