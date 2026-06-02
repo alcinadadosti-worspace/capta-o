@@ -12,5 +12,11 @@ services:
         sync: false      # você preenche no painel do Render (secreto)
       - key: SLACK_BOT_TOKEN
         sync: false      # você preenche no painel do Render (secreto)
-      - key: SLACK_TARGET_ID
-        value: U0895CZ8HU7
+      # Os destinos do Slack por região já estão embutidos no server.js.
+      # Só descomente/defina abaixo se um dia quiser trocá-los sem mexer no código:
+      # - key: SLACK_ID_REGIAO_A
+      #   value: U0AHTBS64KH
+      # - key: SLACK_ID_REGIAO_B
+      #   value: U087HG1B4DB
+      # - key: SLACK_ID_PADRAO
+      #   value: U07LP4JSN9K
